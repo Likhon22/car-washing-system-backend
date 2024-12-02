@@ -14,10 +14,10 @@ const createAddressValidations = z.object({
   streetNo: z.string(),
 });
 
-const createAppUserValidation = z.object({
+const createAdminValidation = z.object({
   body: z.object({
     password: z.string(),
-    appUser: z.object({
+    admin: z.object({
       name: createNameValidations,
       email: z.string().email(),
       phone: z
@@ -31,8 +31,8 @@ const createAppUserValidation = z.object({
   }),
 });
 
-const appUserValidations = {
-  createAppUserValidation,
+const adminValidations = {
+  createAdminValidation,
 };
 
-export default appUserValidations;
+export default adminValidations;
