@@ -8,5 +8,6 @@ export const createToken = (
   secret: string,
   expireDate: string,
 ) => {
-  return jwt.sign(jwtPayload, secret, { expiresIn: expireDate });
+  const token = jwt.sign(jwtPayload, secret, { expiresIn: expireDate });
+  return `Bearer ${token}`;
 };

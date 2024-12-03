@@ -5,6 +5,8 @@ import { StatusCodes } from "http-status-codes";
 const createAppUser = catchAsync(async (req, res) => {
   const { appUser, password } = req.body;
   // const result = await userServices.createAppUserIntoDB(appUser, password);
+  console.log(req.cookies.refreshToken);
+
   sendResponse(res, {
     data: "",
     message: "App user created successfully",

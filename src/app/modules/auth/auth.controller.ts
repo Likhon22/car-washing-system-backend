@@ -1,3 +1,4 @@
+import config from "../../config";
 import AppError from "../../error/AppErrors";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
@@ -9,6 +10,12 @@ const loginUser = catchAsync(async (req, res) => {
     throw new AppError(400, "Please provide a valid email and password");
   }
   const result = await authServices.loginUser(userData);
+  const { refreshToken } = result;
+  res.cookie("refreshToken", refreshToken, {
+    secure: config.node_env === "production",
+    httpOnly: true,
+  });
+
   sendResponse(res, {
     statusCode: 200,
     message: "User logged in successfully",
@@ -28,9 +35,21 @@ const changePassword = catchAsync(async (req, res) => {
   });
 });
 
+const refreshToken = catchAsync(async (req, res) => {
+  const { refreshToken } = req.cookies;
+  const result = await authServices.refreshToken(refreshToken);
+  sendResponse(res, {
+    statusCode: 200,
+    message: "Password changed successfully",
+    data: result,
+    success: true,
+  });
+});
+
 const authControllers = {
   loginUser,
   changePassword,
+  refreshToken,
 };
 
 export default authControllers;

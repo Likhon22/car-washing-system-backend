@@ -3,14 +3,16 @@ import AppError from "../error/AppErrors";
 import { UserModel } from "../modules/User/user.model";
 import catchAsync from "../utils/catchAsync";
 import config from "../config";
+import { cleanAuthToken } from "../utils/cleanAuthToken";
 
 export const auth = (...requiredRoles: string[]) => {
   return catchAsync(async (req, res, next) => {
-    const token = req.headers.authorization;
+    const tokenWithBearer = req.headers.authorization;
 
-    if (!token) {
+    if (!tokenWithBearer) {
       throw new AppError(401, "Unauthorized access");
     }
+    const token = cleanAuthToken(tokenWithBearer);
     // Verify token and check if user exists in the database
     const decoded = jwt.verify(
       token,

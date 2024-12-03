@@ -4,9 +4,10 @@ import AppError from "../../error/AppErrors";
 import { TChangePassword, TLoginUser } from "./auth.interface";
 import { createToken } from "./auth.utils";
 
-import { JwtPayload } from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import config from "../../config";
+import { cleanAuthToken } from "../../utils/cleanAuthToken";
 
 const loginUser = async (payload: TLoginUser) => {
   const { email, password } = payload;
@@ -27,13 +28,17 @@ const loginUser = async (payload: TLoginUser) => {
     email: user.email,
     role: user.role,
   };
-  const token = createToken(
+  const accessToken = createToken(
     jwtPayload,
     config.jwt_secret as string,
     config.jwt_expiration_time as string,
   );
-  const accessToken = `Bearer ${token}`;
-  return accessToken;
+  const refreshToken = createToken(
+    jwtPayload,
+    config.jwt_refresh_secret as string,
+    config.jwt_refresh_expiration_time as string,
+  );
+  return { accessToken, refreshToken };
 };
 
 const changePassword = async (payload: TChangePassword, user: JwtPayload) => {
@@ -67,8 +72,50 @@ const changePassword = async (payload: TChangePassword, user: JwtPayload) => {
   return update;
 };
 
+const refreshToken = async (tokenWithBearer: string) => {
+  if (!tokenWithBearer) {
+    throw new AppError(401, "Unauthorized access");
+  }
+
+  const token = cleanAuthToken(tokenWithBearer);
+
+  // Verify token and check if user exists in the database
+
+  const decoded = jwt.verify(
+    token,
+    config.jwt_refresh_secret as string,
+  ) as JwtPayload;
+  const { email, iat } = decoded;
+  const user = await UserModel.isUserExitsByEmail(email);
+
+  if (!user) {
+    throw new AppError(404, "User not found");
+  }
+
+  if (
+    user.passwordChangedAt &&
+    UserModel.isJWTIssuedBeforePasswordChange(
+      user.passwordChangedAt,
+      iat as number,
+    )
+  ) {
+    throw new AppError(401, "Unauthorized access");
+  }
+  const jwtPayload = {
+    email: user.email,
+    role: user.role,
+  };
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_secret as string,
+    config.jwt_expiration_time as string,
+  );
+  return { accessToken };
+};
+
 const authServices = {
   loginUser,
   changePassword,
+  refreshToken,
 };
 export default authServices;
