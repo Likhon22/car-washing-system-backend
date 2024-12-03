@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Model } from "mongoose";
 
 export type TName = {
   firstName: string;
@@ -22,3 +22,6 @@ export type TAdmin = {
   address: TAddress;
   isDeleted: boolean;
 };
+export interface adminMethods extends Model<TAdmin> {
+  isAdminExists(id: string): Promise<TAdmin | null>;
+}

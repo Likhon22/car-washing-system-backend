@@ -3,6 +3,7 @@ import { TRoute } from "../interface";
 import { userRoutes } from "../modules/User/user.routes";
 import { authRoutes } from "../modules/auth/auth.routes";
 import { appUserRoutes } from "../modules/AppUser/appUser.routes";
+import { adminRoutes } from "../modules/Admin/admin.routes";
 
 const routes = Router();
 
@@ -13,11 +14,15 @@ const moduleRoutes: TRoute[] = [
   },
   {
     path: "/auth",
-    routes: authRoutes, // Add routes for admin module here
+    routes: authRoutes,
   },
   {
     path: "/app-users",
-    routes: appUserRoutes, // Add routes for admin module here
+    routes: appUserRoutes,
+  },
+  {
+    path: "/admin",
+    routes: adminRoutes,
   },
 ];
 
