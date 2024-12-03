@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 export type TName = {
   firstName: string;
   middleName?: string;
@@ -13,6 +15,7 @@ export type TAddress = {
 
 export type TAdmin = {
   id: string;
+  user: mongoose.Types.ObjectId;
   name: TName;
   email: string;
   phone: string;

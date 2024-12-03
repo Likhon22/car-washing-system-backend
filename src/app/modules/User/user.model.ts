@@ -43,6 +43,9 @@ userSchema.statics.isPasswordMatched = async function (
   return await bcrypt.compare(plainPassword, hashedPassword);
 };
 
+userSchema.statics.isUserDeleted = function (user: IUser) {
+  return user.isDeleted;
+};
 userSchema.statics.isJWTIssuedBeforePasswordChange = function (
   passwordChangedTimestamp: Date,
   jwtIssuedTimestamp: number,

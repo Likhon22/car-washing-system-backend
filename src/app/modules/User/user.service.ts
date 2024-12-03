@@ -33,6 +33,7 @@ const createAppUserIntoDB = async (payload: TAppUser, password: string) => {
     }
 
     payload.id = newUser[0].id;
+    payload.user = newUser[0]._id;
 
     const result = await AppUserModel.create([payload], { session: session });
     if (!result.length) {
@@ -72,6 +73,7 @@ const createAdminIntoDB = async (payload: TAppUser, password: string) => {
     }
 
     payload.id = newUser[0].id;
+    payload.user = newUser[0]._id;
 
     const result = await AdminModel.create([payload], { session: session });
     if (!result.length) {

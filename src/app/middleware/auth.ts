@@ -24,6 +24,10 @@ export const auth = (...requiredRoles: string[]) => {
     if (!user) {
       throw new AppError(404, "User not found");
     }
+    const isUserDeleted = UserModel.isUserDeleted(user);
+    if (isUserDeleted) {
+      throw new AppError(404, "User not found");
+    }
     if (requiredRoles && !requiredRoles.includes(role)) {
       throw new AppError(401, "Unauthorized access");
     }

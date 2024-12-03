@@ -12,6 +12,7 @@ export interface IUser {
 
 export interface userMethods extends Model<IUser> {
   isUserExitsByEmail(email: string): Promise<IUser | null>;
+  isUserDeleted(user: IUser): boolean;
   isPasswordMatched(
     plainPassword: string,
     hashedPassword: string,

@@ -7,6 +7,7 @@ import { handleZodError } from "../error/zodError";
 import { handleValidationError } from "../error/mongooseValidationError";
 import { handleDuplicateError } from "../error/duplicateError";
 import AppError from "../error/AppErrors";
+import { handleCastError } from "../error/castError";
 
 const globalErrorHandler: ErrorRequestHandler = async (err, req, res, next) => {
   let statusCode = err.statusCode || 500;
@@ -30,6 +31,12 @@ const globalErrorHandler: ErrorRequestHandler = async (err, req, res, next) => {
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
     errorSources = simplifiedError.errorSources;
+  }
+  if (err.name === "CastError") {
+    const simpliFiedError = handleCastError(err);
+    statusCode = simpliFiedError?.statusCode;
+    message = simpliFiedError?.message;
+    errorSources = simpliFiedError?.errorSources;
   }
 
   if (err.code === 11000) {

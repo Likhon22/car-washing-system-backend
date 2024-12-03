@@ -16,6 +16,10 @@ const loginUser = async (payload: TLoginUser) => {
   if (!user) {
     throw new AppError(404, "User not found");
   }
+  const isUserDeleted = UserModel.isUserDeleted(user);
+  if (isUserDeleted) {
+    throw new AppError(404, "User not found");
+  }
   const matchedPassword = await UserModel.isPasswordMatched(
     password,
     user.password,
@@ -45,6 +49,10 @@ const changePassword = async (payload: TChangePassword, user: JwtPayload) => {
   const { oldPassword, newPassword, confirmPassword } = payload;
   const isUserExitsByEmail = await UserModel.isUserExitsByEmail(user.email);
   if (!isUserExitsByEmail) {
+    throw new AppError(404, "User not found");
+  }
+  const isUserDeleted = UserModel.isUserDeleted(isUserExitsByEmail);
+  if (isUserDeleted) {
     throw new AppError(404, "User not found");
   }
 
@@ -89,6 +97,10 @@ const refreshToken = async (tokenWithBearer: string) => {
   const user = await UserModel.isUserExitsByEmail(email);
 
   if (!user) {
+    throw new AppError(404, "User not found");
+  }
+  const isUserDeleted = UserModel.isUserDeleted(user);
+  if (isUserDeleted) {
     throw new AppError(404, "User not found");
   }
 

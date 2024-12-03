@@ -1,3 +1,5 @@
+import mongoose, { Model } from "mongoose";
+
 export type TName = {
   firstName: string;
   middleName?: string;
@@ -12,6 +14,7 @@ export type TAddress = {
 };
 
 export type TAppUser = {
+  user: mongoose.Types.ObjectId;
   id: string;
   name: TName;
   email: string;
@@ -19,3 +22,7 @@ export type TAppUser = {
   address: TAddress;
   isDeleted: boolean;
 };
+
+export interface appUserMethods extends Model<TAppUser> {
+  isAppUserExists(id: string): Promise<TAppUser | null>;
+}

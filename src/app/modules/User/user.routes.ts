@@ -10,7 +10,7 @@ const router = Router();
 
 router.post(
   "/create-app-user",
-  auth(User_Role.ADMIN),
+
   validateRequest(appUserValidations.createAppUserValidation),
   userControllers.createAppUser,
 );

@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { TAddress, TAppUser, TName } from "./appUser.interface";
+import { appUserMethods, TAddress, TAppUser, TName } from "./appUser.interface";
 
 const nameSchema = new Schema<TName>({
   firstName: { type: String, required: true },
@@ -15,9 +15,10 @@ const addressSchema = new Schema<TAddress>({
   streetNo: { type: String, required: true },
 });
 
-const appUserSchema = new Schema<TAppUser>(
+const appUserSchema = new Schema<TAppUser, appUserMethods>(
   {
     name: { type: nameSchema, required: true },
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     id: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     phone: { type: String, required: true },
@@ -30,6 +31,10 @@ const appUserSchema = new Schema<TAppUser>(
   { timestamps: true },
 );
 
-const AppUserModel = model<TAppUser>("AppUser", appUserSchema);
+appUserSchema.statics.isAppUserExists = async function (id: string) {
+  return this.findOne({ _id: id, isDeleted: { $ne: true } });
+};
+
+const AppUserModel = model<TAppUser, appUserMethods>("AppUser", appUserSchema);
 
 export default AppUserModel;
