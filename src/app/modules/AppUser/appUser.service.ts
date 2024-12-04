@@ -4,10 +4,18 @@ import AppError from "../../error/AppErrors";
 import { TAppUser } from "./appUser.interface";
 import AppUserModel from "./appUser.model";
 import { UserModel } from "../User/user.model";
+import QueryBuilder from "../../builder/QueryBuilder";
+import { searchAbleFieldsOfAppUsers } from "./appUser.constant";
 
-const getAllAppUsersFromDB = async () => {
-  const appUsers = await AppUserModel.find();
-  return appUsers;
+const getAllAppUsersFromDB = async (query: Record<string, unknown>) => {
+  const appUsers = new QueryBuilder(AppUserModel.find(), query)
+    .search(searchAbleFieldsOfAppUsers)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  const result = await appUsers.modelQuery;
+  return result;
 };
 
 const getSingleUserFromDB = async (id: string) => {
@@ -47,7 +55,6 @@ const updateAppUserInDB = async (id: string, payload: Partial<TAppUser>) => {
 };
 const deleteUserFromDB = async (id: string) => {
   const isAppUserExists = await AppUserModel.isAppUserExists(id);
-  console.log(isAppUserExists);
 
   if (!isAppUserExists) {
     throw new AppError(404, "User not found");

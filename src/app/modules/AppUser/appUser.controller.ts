@@ -4,7 +4,8 @@ import sendResponse from "../../utils/sendResponse";
 import appUserServices from "./appUser.service";
 
 const getAllAppUsers = catchAsync(async (req, res) => {
-  const result = await appUserServices.getAllAppUsersFromDB();
+  const result = await appUserServices.getAllAppUsersFromDB(req.query);
+
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     message: "All app users fetched successfully",

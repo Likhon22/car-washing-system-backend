@@ -47,7 +47,6 @@ const updateAdminInDB = async (id: string, payload: Partial<TAdmin>) => {
 };
 const deleteUserFromDB = async (id: string) => {
   const isAdminExists = await AdminModel.isAdminExists(id);
-  console.log(isAdminExists);
 
   if (!isAdminExists) {
     throw new AppError(404, "User not found");
