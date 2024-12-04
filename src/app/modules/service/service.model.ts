@@ -13,9 +13,14 @@ const serviceSchema = new Schema<TService, ServiceMethods>(
   { timestamps: true },
 );
 
+serviceSchema.pre("find", function (next) {
+  this.where({ isDeleted: false });
+  next();
+});
 serviceSchema.statics.isServiceExists = async function (name: string) {
   const formattedName = name.trim().replace(/\s+/g, " ");
   return await this.findOne({
+    isDeleted: { $ne: true },
     name: {
       $regex: `^${formattedName}$`,
       $options: "i",

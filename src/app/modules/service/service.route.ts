@@ -13,5 +13,11 @@ router.post(
 
 router.get("/", serviceControllers.getAllServices);
 router.get("/:id", serviceControllers.getSingleService);
+router.patch(
+  "/:id",
+  validateRequest(serviceValidations.updateServiceValidation),
+  serviceControllers.updateService,
+);
+router.delete("/:id", serviceControllers.deleteService);
 
 export const serviceRoutes = router;

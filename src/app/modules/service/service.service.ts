@@ -35,17 +35,65 @@ const getAllServicesFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getSingleServiceFromDB = async (id: string) => {
-  const service = await ServiceModel.findById(id);
+  const service = await ServiceModel.findOne({
+    _id: id,
+
+    isDeleted: { $ne: true },
+  });
   if (!service) {
     throw new AppError(404, "Service not found");
   }
   return service;
 };
 
+const updateServiceInDB = async (id: string, payload: Partial<TService>) => {
+  const isServiceExists = await ServiceModel.findOne({
+    _id: id,
+
+    isDeleted: { $ne: true },
+  });
+
+  if (!isServiceExists) {
+    throw new AppError(404, "Service not found");
+  }
+  if (payload.name) {
+    const service = await ServiceModel.isServiceExists(payload?.name);
+
+    if (service) {
+      throw new AppError(400, "Service with this name already exists");
+    }
+  }
+
+  const result = await ServiceModel.findByIdAndUpdate(id, payload, {
+    new: true,
+  });
+  return result;
+};
+
+const deleteServiceFromDB = async (id: string) => {
+  const isServiceExists = await ServiceModel.findOne({
+    _id: id,
+
+    isDeleted: { $ne: true },
+  });
+
+  if (!isServiceExists) {
+    throw new AppError(404, "Service not found");
+  }
+  const result = await ServiceModel.findByIdAndUpdate(
+    id,
+    { isDeleted: true },
+    { new: true },
+  );
+  return result;
+};
+
 const serviceServices = {
   createServiceIntoDB,
   getAllServicesFromDB,
   getSingleServiceFromDB,
+  updateServiceInDB,
+  deleteServiceFromDB,
 };
 
 export default serviceServices;
