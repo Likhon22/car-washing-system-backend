@@ -7,8 +7,8 @@ import { bookingSearchableFields } from "./booking.constant";
 import { TBooking } from "./booking.interface";
 import BookingModel from "./booking.model";
 
-const createBookingIntoDB = async (payload: TBooking) => {
-  const isCustomerExists = await AppUserModel.findById(payload.customer);
+const createBookingIntoDB = async (payload: TBooking, email: string) => {
+  const isCustomerExists = await AppUserModel.findOne({ email });
   if (!isCustomerExists) {
     throw new AppError(404, "Customer not found");
   }
@@ -25,6 +25,7 @@ const createBookingIntoDB = async (payload: TBooking) => {
   if (!isServiceExists) {
     throw new AppError(404, `Service not found on this slot `);
   }
+  payload.customer = isCustomerExists._id;
   const newBooking = await BookingModel.create(payload);
   return newBooking;
 };

@@ -5,7 +5,6 @@ const createBookingValidation = z.object({
   body: z.object({
     service: z.string(),
     slot: z.string(),
-    customer: z.string(),
     vehicle: z.enum([...VehicleType] as [string, ...string[]]),
     vehicleBrand: z.string(),
     manufactureYear: z.number(),
