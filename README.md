@@ -1,4 +1,4 @@
-# Car Washing Management System
+# Car Washing Management System Backend
 
 A robust and efficient Car Washing Management System designed for seamless service booking and management. Built with Node.js, Express, and TypeScript, the system features user-friendly operations for both customers and administrators, ensuring a smooth workflow for car washing businesses.
 
