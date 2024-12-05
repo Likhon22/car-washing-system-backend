@@ -7,8 +7,17 @@ const router = Router();
 
 router.post(
   "/create-slot",
-  validateRequest(slotValidations.createSlotValidation),
+  validateRequest(slotValidations.slotValidation),
   slotControllers.createSlot,
+);
+
+router.get("/", slotControllers.getAllSlots);
+
+router.get("/:id", slotControllers.getSingleSlot);
+router.patch(
+  "/:id",
+  validateRequest(slotValidations.slotValidation),
+  slotControllers.updateSlot,
 );
 
 export const slotRoutes = router;

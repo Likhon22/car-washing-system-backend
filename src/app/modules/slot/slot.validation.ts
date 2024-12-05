@@ -6,18 +6,17 @@ const timeFormatValidation = z
     message: "Time must be in HH:mm format (e.g., 09:00)",
   });
 
-const createSlotValidation = z.object({
+const slotValidation = z.object({
   body: z.object({
     service: z.string(),
     date: z.string(),
     startTime: timeFormatValidation,
     endTime: timeFormatValidation,
-    isBooked: z.boolean().default(false),
   }),
 });
 
 const slotValidations = {
-  createSlotValidation,
+  slotValidation,
 };
 
 export default slotValidations;
