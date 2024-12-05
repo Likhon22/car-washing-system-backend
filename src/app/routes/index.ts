@@ -4,7 +4,8 @@ import { userRoutes } from "../modules/User/user.routes";
 import { authRoutes } from "../modules/auth/auth.routes";
 import { appUserRoutes } from "../modules/AppUser/appUser.routes";
 import { adminRoutes } from "../modules/Admin/admin.routes";
-import { serviceRoutes } from "../modules/service/service.route";
+import { serviceRoutes } from "../modules/service/service.routes";
+import { slotRoutes } from "../modules/slot/slot.routes";
 
 const routes = Router();
 
@@ -28,6 +29,10 @@ const moduleRoutes: TRoute[] = [
   {
     path: "/services",
     routes: serviceRoutes,
+  },
+  {
+    path: "/slots",
+    routes: slotRoutes,
   },
 ];
 
