@@ -6,6 +6,7 @@ import { appUserRoutes } from "../modules/AppUser/appUser.routes";
 import { adminRoutes } from "../modules/Admin/admin.routes";
 import { serviceRoutes } from "../modules/service/service.routes";
 import { slotRoutes } from "../modules/slot/slot.routes";
+import { bookingRoutes } from "../modules/booking/booking.routes";
 
 const routes = Router();
 
@@ -33,6 +34,10 @@ const moduleRoutes: TRoute[] = [
   {
     path: "/slots",
     routes: slotRoutes,
+  },
+  {
+    path: "/bookings",
+    routes: bookingRoutes,
   },
 ];
 
