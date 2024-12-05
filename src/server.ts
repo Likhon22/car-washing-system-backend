@@ -5,13 +5,16 @@ import { Server } from "http";
 
 let server: Server;
 async function main() {
-  await mongoose.connect(config.database_url as string);
+  try {
+    await mongoose.connect(config.database_url as string);
 
-  server = app.listen(config.port, () => {
-    console.log(`Database connected on port ${config.port}!`);
-  });
+    server = app.listen(config.port, () => {
+      console.log(`Database connected on port ${config.port}!`);
+    });
+  } catch (error) {
+    console.error("Error occurred: ", error);
+  }
 }
-
 main();
 
 process.on("unhandledRejection", (reason, promise) => {
