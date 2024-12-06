@@ -21,10 +21,23 @@ const refreshTokenValidation = z.object({
   }),
 });
 
+const forgetPasswordValidation = z.object({
+  body: z.object({
+    email: z.string().email(),
+  }),
+});
+const resetValidation = z.object({
+  body: z.object({
+    newPassword: z.string(),
+    email: z.string().email(),
+  }),
+});
 const authValidations = {
   loginValidation,
   passwordChangeValidation,
   refreshTokenValidation,
+  forgetPasswordValidation,
+  resetValidation,
 };
 
 export default authValidations;

@@ -8,6 +8,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import config from "../../config";
 import { cleanAuthToken } from "../../utils/cleanAuthToken";
+import { sendEmail } from "../../utils/sendEmail";
 
 const loginUser = async (payload: TLoginUser) => {
   const { email, password } = payload;
@@ -125,9 +126,70 @@ const refreshToken = async (tokenWithBearer: string) => {
   return { accessToken };
 };
 
+const forgetPassword = async (email: string) => {
+  const user = await UserModel.isUserExitsByEmail(email);
+  if (!user) {
+    throw new AppError(404, "User not found");
+  }
+  const isUserDeleted = UserModel.isUserDeleted(user);
+  if (isUserDeleted) {
+    throw new AppError(404, "User not found");
+  }
+
+  const jwtPayload = {
+    email: user.email,
+    role: user.role,
+  };
+  const resetToken = jwt.sign(jwtPayload, config.jwt_secret as string, {
+    expiresIn: config.jwt_expiration_time,
+  });
+
+  const resetLink = `http://localhost:5000?id=${user.id}&token=${resetToken}`;
+  sendEmail(resetLink, user.email);
+};
+
+const resetPassword = async (
+  tokenWithBearer: string,
+  payload: { newPassword: string; email: string },
+) => {
+  const user = await UserModel.isUserExitsByEmail(payload.email);
+
+  if (!user) {
+    throw new AppError(404, "User not found");
+  }
+
+  const isUserDeleted = UserModel.isUserDeleted(user);
+  if (isUserDeleted) {
+    throw new AppError(404, "User not found");
+  }
+  const token = cleanAuthToken(tokenWithBearer);
+
+  const decoded = jwt.verify(token, config.jwt_secret as string) as JwtPayload;
+  const { email, role } = decoded;
+  if (email !== user.email || role !== user.role) {
+    throw new AppError(403, "Forbidden access");
+  }
+  const hashedPassword = await bcrypt.hash(
+    payload.newPassword,
+    Number(config.bcrypt_salt_round),
+  );
+  await UserModel.findOneAndUpdate(
+    {
+      email: payload.email,
+      role: user.role,
+    },
+    {
+      password: hashedPassword,
+      passwordChangedAt: new Date(),
+    },
+  );
+};
+
 const authServices = {
   loginUser,
   changePassword,
   refreshToken,
+  forgetPassword,
+  resetPassword,
 };
 export default authServices;
