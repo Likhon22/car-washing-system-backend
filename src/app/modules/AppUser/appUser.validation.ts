@@ -20,6 +20,7 @@ const createAppUserValidation = z.object({
     appUser: z.object({
       name: createNameValidations,
       email: z.string().email(),
+
       phone: z
         .string()
         .regex(

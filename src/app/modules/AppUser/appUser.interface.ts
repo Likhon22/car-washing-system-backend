@@ -18,6 +18,7 @@ export type TAppUser = {
   id: string;
   name: TName;
   email: string;
+  profileImg?: string;
   phone: string;
   address: TAddress;
   isDeleted: boolean;

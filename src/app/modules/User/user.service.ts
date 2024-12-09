@@ -8,8 +8,13 @@ import { IUser } from "./user.interface";
 import { generateAdminUserId, generateAppUserId } from "./user.utils";
 import AppError from "../../error/AppErrors";
 import AdminModel from "../Admin/admin.model";
+import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary";
 
-const createAppUserIntoDB = async (payload: TAppUser, password: string) => {
+const createAppUserIntoDB = async (
+  payload: TAppUser,
+  password: string,
+  file: any,
+) => {
   const isUserExitsByEmail = await UserModel.isUserExitsByEmail(payload.email);
 
   if (isUserExitsByEmail) {
@@ -30,6 +35,12 @@ const createAppUserIntoDB = async (payload: TAppUser, password: string) => {
     const newUser = await UserModel.create([user], { session });
     if (!newUser.length) {
       throw new AppError(500, "User creation failed");
+    }
+    if (file) {
+      const imageName = `${payload.id} - ${payload.name.firstName} - ${payload.name.lastName}`;
+      const path = file.path;
+      const profileImg = await sendImageToCloudinary(path, imageName);
+      payload.profileImg = profileImg?.secure_url;
     }
 
     payload.id = newUser[0].id;
